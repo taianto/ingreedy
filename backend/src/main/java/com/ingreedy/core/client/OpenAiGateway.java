@@ -22,13 +22,21 @@ public class OpenAiGateway implements LlmGateway {
     }
 
     public IdeaResponse generate(String prompt) {
+
         StructuredResponseCreateParams<IdeaResponse> params = ResponseCreateParams.builder()
                 .model(ChatModel.GPT_4_1_MINI)
                 .input(prompt)
                 .text(IdeaResponse.class)
                 .build();
 
+        long start = System.currentTimeMillis();
+
         StructuredResponse<IdeaResponse> response = this.client.responses().create(params);
+        long end = System.currentTimeMillis();
+
+        System.out.println("Total: " + (end - start) + " ms");
+        System.out.println(response.usage());
+
         return parsed(response);
     }
 
