@@ -1,7 +1,7 @@
 package com.ingreedy.core.controller;
 
-import com.ingreedy.core.dto.IdeaRequest;
-import com.ingreedy.core.dto.IdeaResponse;
+import com.ingreedy.core.dto.idea.IdeaRequest;
+import com.ingreedy.core.dto.idea.IdeaResponse;
 import com.ingreedy.core.service.IdeaService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -24,4 +24,10 @@ public class ChatController {
         IdeaResponse response = ideaService.generateRecommendations(request.idea());
         return ResponseEntity.ok(response);
     }
+
+//    @PostMapping("/recipe")
+//    public ResponseEntity<RecipeResponse> recipe(@Valid @RequestBody RecipeRequest request) {
+//        RecipeResponse response = recipeService.generateRecipe(request.ingredients());
+//        return ResponseEntity.ok(response);
+//    }
 }

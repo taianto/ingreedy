@@ -1,4 +1,4 @@
-package com.ingreedy.core.dto;
+package com.ingreedy.core.dto.idea;
 
 import jakarta.validation.constraints.NotBlank;
 

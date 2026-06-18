@@ -1,46 +1,38 @@
 package com.ingreedy.core.client;
 
-import com.ingreedy.core.dto.IdeaResponse;
+import com.ingreedy.core.dto.llm.LlmRecommendationsResponse;
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
 import com.openai.models.ChatModel;
 import com.openai.models.responses.ResponseCreateParams;
-import com.openai.models.responses.StructuredResponseCreateParams;
 import com.openai.models.responses.StructuredResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 @Component
 public class OpenAiGateway implements LlmGateway {
+
     private final OpenAIClient client;
 
-    public OpenAiGateway(
-            Environment environment
-    ) {
+    public OpenAiGateway(Environment environment) {
         String apiKey = environment.getProperty("llm.openai.api-key");
-        this.client = OpenAIOkHttpClient.builder().apiKey(apiKey).build();
+        this.client = OpenAIOkHttpClient.builder()
+                .apiKey(apiKey)
+                .build();
     }
 
-    public IdeaResponse generate(String prompt) {
+    @Override
+    public LlmRecommendationsResponse generateRecommendations(String prompt) {
 
-        StructuredResponseCreateParams<IdeaResponse> params = ResponseCreateParams.builder()
+        var params = ResponseCreateParams.builder()
                 .model(ChatModel.GPT_4_1_MINI)
                 .input(prompt)
-                .text(IdeaResponse.class)
+                .text(LlmRecommendationsResponse.class)
                 .build();
 
-        long start = System.currentTimeMillis();
+        StructuredResponse<LlmRecommendationsResponse> response =
+                client.responses().create(params);
 
-        StructuredResponse<IdeaResponse> response = this.client.responses().create(params);
-        long end = System.currentTimeMillis();
-
-        System.out.println("Total: " + (end - start) + " ms");
-        System.out.println(response.usage());
-
-        return parsed(response);
-    }
-
-    private IdeaResponse parsed(StructuredResponse<IdeaResponse> response) {
         return response.output()
                 .getFirst()
                 .asMessage()

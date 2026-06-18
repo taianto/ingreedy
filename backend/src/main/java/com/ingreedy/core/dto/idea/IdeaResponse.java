@@ -1,4 +1,6 @@
-package com.ingreedy.core.dto;
+package com.ingreedy.core.dto.idea;
+
+import com.ingreedy.core.model.Recommendation;
 
 import java.util.List;
 

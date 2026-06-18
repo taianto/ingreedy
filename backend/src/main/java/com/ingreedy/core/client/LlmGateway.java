@@ -1,7 +1,7 @@
 package com.ingreedy.core.client;
 
-import com.ingreedy.core.dto.IdeaResponse;
+import com.ingreedy.core.dto.llm.LlmRecommendationsResponse;
 
 public interface LlmGateway {
-    IdeaResponse generate(String prompt);
+    LlmRecommendationsResponse generateRecommendations(String prompt);
 }

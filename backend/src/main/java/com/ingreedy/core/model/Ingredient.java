@@ -1,7 +1,9 @@
-package com.ingreedy.core.dto;
+package com.ingreedy.core.model;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+
+import java.util.Optional;
 
 public record Ingredient(
     @NotBlank(message = "Ingredient name must not be empty.")
