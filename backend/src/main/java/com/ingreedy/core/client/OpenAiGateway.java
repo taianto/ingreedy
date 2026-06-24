@@ -1,5 +1,6 @@
 package com.ingreedy.core.client;
 
+import com.ingreedy.core.dto.llm.LlmRecipeResponse;
 import com.ingreedy.core.dto.llm.LlmRecommendationsResponse;
 import com.openai.client.OpenAIClient;
 import com.openai.client.okhttp.OpenAIOkHttpClient;
@@ -40,4 +41,26 @@ public class OpenAiGateway implements LlmGateway {
                 .getFirst()
                 .asOutputText();
     }
+
+    @Override
+    public String generateRecipe(String prompt) {
+        var params = ResponseCreateParams.builder()
+                .model(ChatModel.GPT_4_1_MINI)
+                .input(prompt)
+                .text(LlmRecipeResponse.class)
+                .build();
+
+        StructuredResponse<LlmRecipeResponse> response =
+                client.responses().create(params);
+
+        return response.output()
+                .getFirst()
+                .asMessage()
+                .content()
+                .getFirst()
+                .asOutputText()
+                .recipe();
+    }
+
+
 }

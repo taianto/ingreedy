@@ -4,4 +4,5 @@ import com.ingreedy.core.dto.llm.LlmRecommendationsResponse;
 
 public interface LlmGateway {
     LlmRecommendationsResponse generateRecommendations(String prompt);
+    String generateRecipe(String prompt);
 }

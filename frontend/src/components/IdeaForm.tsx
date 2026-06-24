@@ -31,7 +31,14 @@ export const IdeaForm: React.FC<IdeaFormProps> = ({ onSubmit, isLoading }) => {
         />
       </div>
       <button type="submit" disabled={!idea.trim() || isLoading}>
-        {isLoading ? 'Generating...' : 'Get Recommendations'}
+        {isLoading ? (
+          <>
+            <span className="spinner" aria-hidden="true" />
+            Generating...
+          </>
+        ) : (
+          'Get Recommendations'
+        )}
       </button>
     </form>
   );

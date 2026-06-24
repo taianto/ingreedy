@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { IdeaForm } from './components/IdeaForm';
 import { RecommendationsList } from './components/RecommendationsList';
 import { ErrorMessage } from './components/ErrorMessage';
@@ -8,12 +8,17 @@ import './App.css';
 
 function App() {
   const [response, setResponse] = useState<IdeaResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isIdeasLoading, setIsIdeasLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [recipeLoadingById, setRecipeLoadingById] = useState<Record<string, boolean>>({});
+  const [recipeErrorById, setRecipeErrorById] = useState<Record<string, string>>({});
 
   const handleSubmit = async (idea: string) => {
-    setIsLoading(true);
+    setIsIdeasLoading(true);
     setError(null);
+    setRecipeLoadingById({});
+    setRecipeErrorById({});
+
     try {
       const result = await chatService.generateIdea(idea);
       setResponse(result);
@@ -25,7 +30,49 @@ function App() {
       setError(errorMessage);
       setResponse(null);
     } finally {
-      setIsLoading(false);
+      setIsIdeasLoading(false);
+    }
+  };
+
+  const handleGenerateRecipe = async (ideaUuid?: string) => {
+    if (!ideaUuid) {
+      return;
+    }
+
+    setRecipeLoadingById((prev) => ({ ...prev, [ideaUuid]: true }));
+    setRecipeErrorById((prev) => ({ ...prev, [ideaUuid]: '' }));
+
+    try {
+      const recipeResponse = await chatService.generateRecipe(ideaUuid);
+
+      setResponse((prev) => {
+        if (!prev) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          recommendations: prev.recommendations.map((recommendation) => {
+            if (recommendation.id !== ideaUuid) {
+              return recommendation;
+            }
+
+            return {
+              ...recommendation,
+              recipe: recipeResponse.recipe,
+            };
+          }),
+        };
+      });
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : 'Failed to generate recipe. Please try again.';
+
+      setRecipeErrorById((prev) => ({ ...prev, [ideaUuid]: errorMessage }));
+    } finally {
+      setRecipeLoadingById((prev) => ({ ...prev, [ideaUuid]: false }));
     }
   };
 
@@ -44,11 +91,18 @@ function App() {
           />
         )}
 
-        <IdeaForm onSubmit={handleSubmit} isLoading={isLoading} />
+        <IdeaForm onSubmit={handleSubmit} isLoading={isIdeasLoading} />
 
-        {response && <RecommendationsList response={response} />}
+        {response && (
+          <RecommendationsList
+            response={response}
+            onGenerateRecipe={handleGenerateRecipe}
+            recipeLoadingById={recipeLoadingById}
+            recipeErrorById={recipeErrorById}
+          />
+        )}
 
-        {!response && !isLoading && !error && (
+        {!response && !isIdeasLoading && !error && (
           <div className="welcome-message">
             <p>👇 Enter your meal idea to get started!</p>
           </div>

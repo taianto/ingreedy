@@ -2,7 +2,10 @@ package com.ingreedy.core.controller;
 
 import com.ingreedy.core.dto.idea.IdeaRequest;
 import com.ingreedy.core.dto.idea.IdeaResponse;
+import com.ingreedy.core.dto.recipe.RecipeRequest;
+import com.ingreedy.core.dto.recipe.RecipeResponse;
 import com.ingreedy.core.service.IdeaService;
+import com.ingreedy.core.service.RecipeService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/chat")
 public class ChatController {
     private final IdeaService ideaService;
+    private final RecipeService recipeService;
 
-    public ChatController(IdeaService ideaService) {
+    public ChatController(IdeaService ideaService,  RecipeService recipeService) {
         this.ideaService = ideaService;
+        this.recipeService = recipeService;
     }
 
     @PostMapping("/idea")
@@ -25,9 +30,9 @@ public class ChatController {
         return ResponseEntity.ok(response);
     }
 
-//    @PostMapping("/recipe")
-//    public ResponseEntity<RecipeResponse> recipe(@Valid @RequestBody RecipeRequest request) {
-//        RecipeResponse response = recipeService.generateRecipe(request.ingredients());
-//        return ResponseEntity.ok(response);
-//    }
+    @PostMapping("/recipe")
+    public ResponseEntity<RecipeResponse> recipe(@Valid @RequestBody RecipeRequest request) {
+        RecipeResponse response = recipeService.generateRecipe(request.ideaUuid());
+        return ResponseEntity.ok(response);
+    }
 }

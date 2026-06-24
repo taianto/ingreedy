@@ -2,7 +2,6 @@ package com.ingreedy.core.service;
 
 import com.ingreedy.core.client.LlmGateway;
 import com.ingreedy.core.dto.idea.IdeaResponse;
-import com.ingreedy.core.dto.llm.LlmRecommendation;
 import com.ingreedy.core.dto.llm.LlmRecommendationsResponse;
 import com.ingreedy.core.factory.RecommendationFactory;
 import com.ingreedy.core.model.Recommendation;
@@ -12,7 +11,6 @@ import java.util.List;
 
 @Service
 public class IdeaService {
-
 	private final PromptTemplateService promptTemplateService;
 	private final LlmGateway llmGateway;
 	private final RecommendationFactory factory;
@@ -31,7 +29,6 @@ public class IdeaService {
 	}
 
 	public IdeaResponse generateRecommendations(String idea) {
-
 		String prompt = promptTemplateService.renderIdeaPrompt(idea);
 
 		LlmRecommendationsResponse response =
